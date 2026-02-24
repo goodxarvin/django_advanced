@@ -3,8 +3,12 @@ services:
   backend:
     build: .
     container_name: backend
+    environment:
+      - SECRET_KEY=test
+      - DEBUG=True
     ports:
       - "8000:8000"
     volumes:
-      - ./core:/app/core
+      - .:/app
     command: python manage.py runserver 0.0.0.0:8000
+    
