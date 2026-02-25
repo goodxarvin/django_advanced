@@ -1,9 +1,10 @@
 from curses import A_VERTICAL
 from django.shortcuts import render
-from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView, CreateView, UpdateView
+from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView, CreateView, UpdateView, DeleteView
 from .models import Post
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .forms import PostForm
 from django.urls import reverse_lazy
 
@@ -38,7 +39,8 @@ class RedirectViewAUR(RedirectView):
         return super().get_redirect_url(*args, **kwargs)
         
 
-class PostListView(ListView):
+class PostListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    permission_required = "blog.view_post"
     model = Post
     context_object_name = "posts"
     paginate_by = 2
@@ -78,3 +80,25 @@ class PostCreateView(CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+class PostUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    permission_required = "blog.change_post"
+    model = Post
+    form_class = PostForm
+    template_name = "blog/post_update.html"
+    success_url = "/blog/post/"
+
+    def get_object(self):
+        return get_object_or_404(Post, id=self.kwargs["pid"])
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+class PostDeleteView(DeleteView):
+    model = Post
+    template_name = "blog/post_delete.html"
+    success_url = "/blog/post/"
+
+    def get_object(self):
+        return get_object_or_404(Post, id=self.kwargs["pid"])

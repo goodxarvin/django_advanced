@@ -18,4 +18,6 @@ urlpatterns = [
     path("post/<int:pid>/", views.PostDetailView.as_view(), name="post-detail-page"),
     path("post/create_temp/", views.PostFormView.as_view(), name="post-create"),
     path("post/create/", views.PostCreateView.as_view(), name="post-create-form"),
+    path("post/<int:pid>/update/", views.PostUpdateView.as_view(), name="post-update-page"),
+    path("post/<int:pid>/delete/", views.PostDeleteView.as_view(), name="post-delete-page"),
 ]
