@@ -6,7 +6,7 @@ from .models import Post, Category
 
 class PostAdmin(admin.ModelAdmin):
     model = Post
-    list_display = ('title', 'author', 'category', 'status', 'created_at', 'updated_at', 'published_at')
+    list_display = ("id", 'title', 'author', 'category', 'status', 'created_at', 'updated_at', 'published_at')
     list_filter = ('status', 'category', 'author')
     search_fields = ('title', 'content')
     list_editable = ('status', 'category')
