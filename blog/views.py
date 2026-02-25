@@ -78,7 +78,7 @@ class PostCreateView(CreateView):
     success_url = "/blog/post/"
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        form.instance.author = self.request.user.profile
         return super().form_valid(form)
 
 class PostUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
