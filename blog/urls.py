@@ -14,5 +14,6 @@ urlpatterns = [
     # path('post-redirection/<int:pk>/', views.RedirectViewAUR.as_view(), name="post-redirection-post"),
     path('cbv2/', views.IndexView.as_view(), name="cbv2-test"),
     path('aur-redirection/', views.RedirectViewAUR.as_view(), name="aur-redirection"),
-    path("post-list/", views.PostListView.as_view(), name="post-list"),
+    path("post/", views.PostListView.as_view(), name="post-list"),
+    path("post/<int:pid>/", views.PostDetailView.as_view(), name="post-detail-page"),
 ]

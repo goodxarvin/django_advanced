@@ -1,6 +1,6 @@
 from curses import A_VERTICAL
 from django.shortcuts import render
-from django.views.generic import TemplateView, RedirectView, ListView
+from django.views.generic import TemplateView, RedirectView, ListView, DetailView
 from .models import Post
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
@@ -48,3 +48,11 @@ class PostListView(ListView):
     # def get_queryset(self):
     #     posts = Post.objects.filter(status=True)
     #     return posts
+
+class PostDetailView(DetailView):
+    model = Post
+    context_object_name = "post"
+    template_name = "blog/post_detail.html"
+
+    def get_object(self):
+        return get_object_or_404(Post, id=self.kwargs["pid"])

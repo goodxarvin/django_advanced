@@ -12,7 +12,9 @@
     <ol>
         {% for post in posts %}
         <li>
-            <h2>{{ post.title }}</h2>
+            <h2>
+                <a href="{% url 'blog:post-detail-page' pid=post.id %}">{{ post.title }}</a>
+            </h2>
             <p>{{ post.content }}</p>
         </li>
         {% endfor %}
