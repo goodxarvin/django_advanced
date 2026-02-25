@@ -16,5 +16,6 @@ urlpatterns = [
     path('aur-redirection/', views.RedirectViewAUR.as_view(), name="aur-redirection"),
     path("post/", views.PostListView.as_view(), name="post-list"),
     path("post/<int:pid>/", views.PostDetailView.as_view(), name="post-detail-page"),
-    path("post/create/", views.PostCreateView.as_view(), name="post-create"),
+    path("post/create_temp/", views.PostFormView.as_view(), name="post-create"),
+    path("post/create/", views.PostCreateView.as_view(), name="post-create-form"),
 ]

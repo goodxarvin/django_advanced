@@ -1,6 +1,6 @@
 from curses import A_VERTICAL
 from django.shortcuts import render
-from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView
+from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView, CreateView, UpdateView
 from .models import Post
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
@@ -59,11 +59,22 @@ class PostDetailView(DetailView):
     def get_object(self):
         return get_object_or_404(Post, id=self.kwargs["pid"])
 
-class PostCreateView(FormView):
+class PostFormView(FormView):
     form_class = PostForm
-    template_name = "blog/post_create.html"
+    template_name = "blog/post_form.html"
     success_url = "/blog/post/"
 
     def form_valid(self, form):
         form.save()
+        return super().form_valid(form)
+
+class PostCreateView(CreateView):
+    model = Post
+    form_class = PostForm
+    # fields = ["title", "content", "author", "category", "status", "published_at"] # or use form_class = PostForm instead of fields
+    template_name = "blog/post_create.html"
+    success_url = "/blog/post/"
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
         return super().form_valid(form)
