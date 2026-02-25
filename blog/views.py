@@ -1,9 +1,11 @@
 from curses import A_VERTICAL
 from django.shortcuts import render
-from django.views.generic import TemplateView, RedirectView, ListView, DetailView
+from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView
 from .models import Post
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
+from .forms import PostForm
+from django.urls import reverse_lazy
 
 #Function Based View template show
 '''def indexView(request):
@@ -56,3 +58,12 @@ class PostDetailView(DetailView):
 
     def get_object(self):
         return get_object_or_404(Post, id=self.kwargs["pid"])
+
+class PostCreateView(FormView):
+    form_class = PostForm
+    template_name = "blog/post_create.html"
+    success_url = "/blog/post/"
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
