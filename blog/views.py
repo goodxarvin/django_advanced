@@ -1,4 +1,5 @@
 from curses import A_VERTICAL
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView, CreateView, UpdateView, DeleteView
 from .models import Post
@@ -7,6 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .forms import PostForm
 from django.urls import reverse_lazy
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 #Function Based View template show
 '''def indexView(request):
@@ -102,3 +105,7 @@ class PostDeleteView(DeleteView):
 
     def get_object(self):
         return get_object_or_404(Post, id=self.kwargs["pid"])
+
+@api_view()
+def api_post_list_view(request):
+    return Response({"name": "arvin"})
