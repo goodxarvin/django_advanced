@@ -6,7 +6,10 @@ from . import views
 app_name = "api-v1"
 
 urlpatterns = [
-    path("post/", views.post_list, name="post-list"),
-    path("post/<int:pid>", views.post_detail, name="post-detail"),
+    path("post/", views.PostList.as_view(), name="post-list"),
+    # FBS: path("post/", views.post_list, name="post-list"),
+    path("post/<int:pid>", views.PostDetail.as_view(), name="post-detail"),
+    # FBS: path("post/<int:pid>", views.post_detail, name="post-detail"),
+
 
 ]
