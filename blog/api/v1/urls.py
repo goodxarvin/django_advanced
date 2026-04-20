@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register("post", views.PostViewSet, basename="post")
+router.register("category", views.CategoryViewSet, basename="category")
 
 # from django.views.generic import TemplateView, RedirectView
 
@@ -17,8 +18,6 @@ app_name = "api-v1"
 #     # FBS: path("post/<int:pid>", views.post_detail, name="post-detail"),
 #     path("post/", views.PostViewSet.as_view({"get": "list", "post": "create"}), name="post-viewset-list"),
 #     path("post/<int:pk>/", views.PostViewSet.as_view({"get": "retrieve", "put": "update", "delete": "destroy"}), name="post-viewset-detail")
-
-
 # ]
 
 urlpatterns = router.urls

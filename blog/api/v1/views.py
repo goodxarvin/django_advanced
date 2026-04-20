@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView, ListCreateAPIView, GenericAPIView
 from rest_framework import mixins
-from .serializers import PostSerializer
+from .serializers import PostSerializer, CategorySerializer
 from rest_framework import status
-from ...models import Post
+from ...models import Post, Category
 from django.shortcuts import get_object_or_404
 
 
@@ -165,12 +165,17 @@ class PostDetail(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMi
 
 #CBS for post detail v3:
 
+
 class PostDetail(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
 
 
+
+# viewset: 
+
+'''
 class PostViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
@@ -203,5 +208,16 @@ class PostViewSet(viewsets.ViewSet):
         post.delete()
         return Response({"detail": "post deleted successfully"})
 
-
+'''
         
+# model viewset:
+
+class PostViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
