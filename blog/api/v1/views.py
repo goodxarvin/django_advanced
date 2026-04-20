@@ -1,7 +1,6 @@
 from operator import truediv
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.serializers import SerializerMetaclass
 from .serializers import PostSerializer
 from rest_framework import status
 from ...models import Post
@@ -25,11 +24,20 @@ def post_list(request):
         #     return Response(serializer.data)
         # else:
         #     return Response("not valid data")
-@api_view()
+@api_view(["GET", "PUT", "DELETE"])
 def post_detail(request, pid):
     post = get_object_or_404(Post, pk=pid, status=True)
-    serializer = PostSerializer(post)
-    return Response(serializer.data)
+    if request.method == "GET":
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+    elif request.method == "PUT":
+        serializer = PostSerializer(post, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    elif request.method == 'DELETE':
+        post.delete()
+        return Response({"detail": "post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
     #--------- optimized way or this wau beneath ---------
 
