@@ -1,5 +1,7 @@
+from calendar import month
 from pickle import TRUE
-from rest_framework.decorators import api_view, permission_classes
+from this import d
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -216,6 +218,10 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly,]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
+
+    @action(methods=["get"], detail=False)
+    def get_ok(self, request):
+        return Response({"result": "good ok"})
 
 class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly,]

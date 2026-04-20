@@ -1,7 +1,8 @@
 from email.mime import base
+from warnings import simplefilter
 from django.urls import path, include
 from . import views
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import DefaultRouter, SimpleRouter
 
 router = DefaultRouter()
 router.register("post", views.PostViewSet, basename="post")
