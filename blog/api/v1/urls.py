@@ -6,10 +6,12 @@ from . import views
 app_name = "api-v1"
 
 urlpatterns = [
-    path("post/", views.PostList.as_view(), name="post-list"),
+    # CBS: path("post/", views.PostList.as_view(), name="post-list"),
     # FBS: path("post/", views.post_list, name="post-list"),
-    path("post/<int:pk>", views.PostDetail.as_view(), name="post-detail"),
+    # CBS: path("post/<int:pk>", views.PostDetail.as_view(), name="post-detail"),
     # FBS: path("post/<int:pid>", views.post_detail, name="post-detail"),
+    path("post/", views.PostViewSet.as_view({"get": "list", "post": "create"}), name="post-viewset-list"),
+    path("post/<int:pk>/", views.PostViewSet.as_view({"get": "retrieve", "put": "update", "delete": "destroy"}), name="post-viewset-detail")
 
 
 ]

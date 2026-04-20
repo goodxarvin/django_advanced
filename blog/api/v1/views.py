@@ -1,7 +1,9 @@
+from pickle import TRUE
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import viewsets
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView, ListCreateAPIView, GenericAPIView
 from rest_framework import mixins
 from .serializers import PostSerializer
@@ -168,3 +170,38 @@ class PostDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
 
+
+class PostViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
+
+    def list(self, request):
+        serializer = self.serializer_class(self.queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        post = get_object_or_404(self.queryset, status=True, pk=pk)
+        serializer = self.serializer_class(post)
+        return Response(serializer.data)
+    
+    def update(self, request, pk=None):
+        post = get_object_or_404(self.queryset, status=True, pk=pk)
+        serializer = self.serializer_class(post, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
+    def destroy(self, request, pk=None):
+        post = get_object_or_404(self.queryset, status=True, pk=pk)
+        post.delete()
+        return Response({"detail": "post deleted successfully"})
+
+
+        
