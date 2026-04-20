@@ -2,6 +2,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView, ListCreateAPIView, GenericAPIView
+from rest_framework import mixins
 from .serializers import PostSerializer
 from rest_framework import status
 from ...models import Post
@@ -35,12 +37,13 @@ def post_list(request):
         # else:
         #     return Response("not valid data")"""
 
-#CBS for post list:
+#CBS for post list v1:
 
 
-class PostList(APIView):
+'''class PostList(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
+    # you can get the query here also: postl = Post.objects.filter(status=True)
 
     def get(self, request):
         post = Post.objects.filter(status=True)
@@ -51,7 +54,31 @@ class PostList(APIView):
         serializer = PostSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data)'''
+
+
+#CBS for post list v2:
+
+'''class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)'''
+
+
+#CBS for post list v3:
+
+class PostList(ListCreateAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
+
 
 
 #FBV for post detail:
@@ -81,16 +108,20 @@ def post_detail(request, pid):
     #     return Response({"detail": "post does not exist"}, status=status.HTTP_404_NOT_FOUND)'''
 
 
-#CBS for post detail:
+#CBS for post detail v1:
+'''
 class PostDetail(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
     def get(self, request ,pid):
+        """observe the post"""
         post = get_object_or_404(Post, pk=pid, status=True)
         serializer = self.serializer_class(post)
         return Response(serializer.data)
 
     def put(self, request, pid):
+        """edit a post"""
+
         post = get_object_or_404(Post, pk=pid, status=True)
         serializer = self.serializer_class(post, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -98,9 +129,42 @@ class PostDetail(APIView):
         return Response(serializer.data)
 
     def delete(self, request, pid):
+        """delete a post"""
+
         post = get_object_or_404(Post, pk=pid, status=True)
-        serializer = self.serializer_class(post)
         post.delete()
         return Response({"detail": "post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+'''
+#CBS for post detail v2:
+'''
+class PostDetail(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
+    # lookup_field = "id"     --> if you set the post id in urls 'id' you should use this field
 
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+
+    def patch(self, request, *args, **kwargs):
+        """edit a post partially"""
+        return self.update(request, *args, **kwargs)
+
+
+    def put(self, request, *args, **kwargs):
+        """edit a post"""
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """delete a post"""
+        return self.destroy(request, *args, **kwargs)
+'''
+
+#CBS for post detail v3:
+
+class PostDetail(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(status=True)
 
