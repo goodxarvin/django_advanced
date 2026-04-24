@@ -17,7 +17,7 @@ admin.site.register(Post, PostAdmin)
 
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
-    list_display = ('name',)
+    list_display = ("id", 'name')
 
     list_per_page = 10
     list_display_links = ('name',)
