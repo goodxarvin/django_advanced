@@ -33,7 +33,6 @@ class PostSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         request = self.context.get("request")
-        print(request.__dict__)
         rep = super().to_representation(instance)
         rep["category"] = CategorySerializer(instance.category, context={"request": request}).data
         if request.parser_context.get("kwargs"):

@@ -1,7 +1,6 @@
-from calendar import month
-from pickle import TRUE
-from this import d
+from django.utils.dateparse import iso8601_duration_re
 from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.fields import DjangoFilePathField
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,6 +11,8 @@ from .serializers import PostSerializer, CategorySerializer
 from rest_framework import status
 from ...models import Post, Category
 from django.shortcuts import get_object_or_404
+from .permissions import IsOwnerOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 #FBV for post list: 
@@ -215,9 +216,11 @@ class PostViewSet(viewsets.ViewSet):
 # model viewset:
 
 class PostViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
+    filter_backends = [DjangoFilterBackend,]
+    filterset_fields = ["author", "category", "status"]
 
     @action(methods=["get"], detail=False)
     def get_ok(self, request):
