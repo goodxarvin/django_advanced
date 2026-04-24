@@ -1,3 +1,4 @@
+from django.forms import SearchInput
 from django.utils.dateparse import iso8601_duration_re
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.fields import DjangoFilePathField
@@ -13,6 +14,7 @@ from ...models import Post, Category
 from django.shortcuts import get_object_or_404
 from .permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 
 #FBV for post list: 
@@ -219,8 +221,10 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
-    filter_backends = [DjangoFilterBackend,]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["author", "category", "status"]
+    search_fields = ["title", "content",]
+    ordering_fields = ["created_at", "published_at"]
 
     @action(methods=["get"], detail=False)
     def get_ok(self, request):
