@@ -10,7 +10,7 @@ class Post(models.Model):
     content = models.TextField()
     author = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE)
     category = models.ForeignKey("Category", on_delete=models.SET_NULL, null=True)
-    status = models.BooleanField(default=False)    
+    status = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     published_at = models.DateTimeField()

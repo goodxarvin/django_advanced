@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from ...models import Post, Category
+from accounts.models import Profile
 # class PostSerializer(serializers.Serializer):
 #     id = serializers.IntegerField()
 #     title = serializers.CharField(max_length=255)
@@ -14,6 +15,7 @@ class PostSerializer(serializers.ModelSerializer):
     # id = serializers.ReadOnlyField()
     # content = serializers.ReadOnlyField() or --> content = serializers.CharField(read_only=True)
     # category = CategorySerializer()
+    # author = serializers.CharField(read_only=True)
     snippet = serializers.ReadOnlyField(source="get_snippet")
     relative_url = serializers.URLField(source="get_absolute_api_url", read_only=True)
     absolute_url = serializers.SerializerMethodField(method_name="get_absolute_url")
@@ -22,8 +24,8 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content', "snippet", "author", "category", 'status', "absolute_url", "relative_url", 'created_at' ,'published_at']
-        # read_only_fields = ["id", "created_at"]
+        fields = ['id', 'title', 'content', "image", "snippet", "author", "category", 'status', "absolute_url", "relative_url", 'created_at' ,'published_at']
+        read_only_fields = ["id", "created_at", "author"]
     
     def get_absolute_url(self, obj):
         request = self.context.get('request')
@@ -33,9 +35,15 @@ class PostSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         print(request.__dict__)
         rep = super().to_representation(instance)
-        rep["category"] = CategorySerializer(instance.category).data
+        rep["category"] = CategorySerializer(instance.category, context={"request": request}).data
         if request.parser_context.get("kwargs"):
             rep.pop("snippet", None)
             rep.pop("absolute_url", None)
             rep.pop("relative_url", None)
+        else:
+            rep.pop("content", None)
         return rep
+
+    def create(self, validated_data):
+        validated_data["author"] = Profile.objects.get(user__id = self.context.get("request").user.id)
+        return super().create(validated_data)
