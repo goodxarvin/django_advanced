@@ -15,7 +15,7 @@ from django.shortcuts import get_object_or_404
 from .permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-
+from .peginations import LargeResultSetPagination
 
 #FBV for post list: 
 
@@ -225,6 +225,7 @@ class PostViewSet(viewsets.ModelViewSet):
     filterset_fields = ["author", "category", "status"]
     search_fields = ["title", "content",]
     ordering_fields = ["created_at", "published_at"]
+    pagination_class = LargeResultSetPagination
 
     @action(methods=["get"], detail=False)
     def get_ok(self, request):
