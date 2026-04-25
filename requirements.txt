@@ -1,7 +1,13 @@
+# general modules
+
 asgiref==3.11.1
 Django==5.2.11
-django-filter==25.2
+python-decouple==3.8
 djangorestframework==3.17.1
 pillow==12.1.1
-python-decouple==3.8
 sqlparse==0.5.5
+
+#third party moludes
+
+drf-yasg[validation]
+django-filter==25.2
