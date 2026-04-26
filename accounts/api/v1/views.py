@@ -1,11 +1,21 @@
+import profile
+from pyexpat import model
+from ssl import CHANNEL_BINDING_TYPES
+from django.http import response
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.response import Response
-from .serializers import RegistrationSerializer, CustomAuthTokenSerializer
+from .serializers import RegistrationSerializer, CustomAuthTokenSerializer, CustomTokenObtainPairSerializer, ChangePasswordSerializer, ProfileDetailSerializer
 from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from ...models import Profile
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class RgistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
@@ -43,3 +53,42 @@ class CustomDiscardToken(APIView):
     def post(self, request):
         request.user.auth_token.delete()
         return Response({"detail": "logged out successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
+class ChangePasswordAPIView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = ChangePasswordSerializer
+    model = User
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["wrong password"]}, status=status.HTTP_400_BAD_REQUEST)
+
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            return Response({"details": "password changed successfully"}, status=status.HTTP_200_OK)
+            
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileDetailAPIView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated,]
+    serializer_class = ProfileDetailSerializer
+    queryset = Profile.objects.all()
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, user=self.request.user)
+        return obj

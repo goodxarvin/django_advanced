@@ -214,11 +214,11 @@ class PostViewSet(viewsets.ViewSet):
         return Response({"detail": "post deleted successfully"})
 
 '''
-        
+            
 # model viewset:
 
 class PostViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]

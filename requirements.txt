@@ -1,13 +1,23 @@
-# general modules
-
 asgiref==3.11.1
+attrs==26.1.0
 Django==5.2.11
-python-decouple==3.8
-djangorestframework==3.17.1
-pillow==12.1.1
-sqlparse==0.5.5
-
-#third party moludes
-
-drf-yasg[validation]
 django-filter==25.2
+djangorestframework==3.17.1
+djangorestframework_simplejwt==5.5.1
+drf-yasg==1.21.15
+importlib_resources==7.1.0
+inflection==0.5.1
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+packaging==26.2
+pillow==12.1.1
+PyJWT==2.12.1
+python-decouple==3.8
+pytz==2026.1.post1
+PyYAML==6.0.3
+referencing==0.37.0
+rpds-py==0.30.0
+sqlparse==0.5.5
+swagger-spec-validator==3.0.4
+typing_extensions==4.15.0
+uritemplate==4.2.0
