@@ -44,7 +44,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # always put the path below (api-auth/), above the (account/) path :
     path("api-auth/", include("rest_framework.urls")),
-    path("accounts/", include("django.contrib.auth.urls")),
+    path("accounts/", include("accounts.urls")),
     path('blog/', include("blog.urls")),
     path("swagger/output.json", schema_view.without_ui(cache_timeout=0), name="schema-swagger-json"),
     path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
