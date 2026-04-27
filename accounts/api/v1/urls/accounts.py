@@ -10,16 +10,13 @@ urlpatterns = [
 
     path("change-password/", views.ChangePasswordAPIView.as_view(), name="change-password"),
 
-    path("test/", views.SendVerificationEmailAPIView.as_view(), name="test-email"),
 
     #activation
-    # path("activation/confirm/")
+    path("verification/confirm/<str:token>", views.VerificationAPIView.as_view(), name="verify-email"),
 
     #resend activation
-    # path("activation/resend/")
+    path("verification/resend/", views.ResendVrificationsAPIView.as_view(), name="verify-resend"),
 
-
-    #reset password
 
     #token login
     path("login/token/", views.CustomAuthToken.as_view(), name="auth-token"),

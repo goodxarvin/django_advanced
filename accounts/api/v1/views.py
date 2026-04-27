@@ -1,10 +1,7 @@
-import profile
-from pyexpat import model
-from ssl import CHANNEL_BINDING_TYPES
-from django.http import response
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.response import Response
+from decouple import config
 from .serializers import RegistrationSerializer, CustomAuthTokenSerializer, CustomTokenObtainPairSerializer, ChangePasswordSerializer, ProfileDetailSerializer
 from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -12,21 +9,43 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken 
 from ...models import Profile
 from django.contrib.auth import get_user_model
 # from django.core.mail import send_mail
 from mail_templated import EmailMessage
+from .utils import EmailThread
+import jwt
 User = get_user_model()
 
 class RgistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
 
+    def get_token_for_user(self, user) -> dict[str, str]:
+        refresh = RefreshToken.for_user(user)
+        return str(refresh.access_token)
+
     def post(self, request, *args, **kwargs):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            email = serializer.validated_data["email"]
+            user_object = get_object_or_404(User, email=email)
+            access_token = self.get_token_for_user(user_object)
+            email_object = EmailMessage(
+                subject="Verification Email",
+                template_name="email/verification.tpl",
+                context={"access_token": access_token, "name": email,  "id": user_object.id,},
+                from_email="from@example.com",
+                to=["to@example.com"]
+                )
+
+            email_thread = EmailThread(email_object).start()
+            
             data = {
-                "email": serializer.validated_data["email"]
+                "email": serializer.validated_data["email"],
+                "id": user_object.id, 
+                "details": "email sent and registration successful",
             }
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -94,20 +113,82 @@ class ProfileDetailAPIView(generics.RetrieveUpdateAPIView):
         obj = get_object_or_404(queryset, user=self.request.user)
         return obj
 
-class SendVerificationEmailAPIView(generics.GenericAPIView):
+# class SendVerificationEmailAPIView(generics.GenericAPIView):
 
-    def get(self, request, *args, **kwargs):
-        email = EmailMessage(
-            subject="Verification Email",
-            template_name="email/verification.tpl",
-            context={"name": "John Doe", "cid_photo": "my_photo"},
-            from_email="from@example.com",
-            to=["to@example.com"]
-        )
+#     def get_token_for_user(self, user) -> dict[str, str]:
+#         refresh = RefreshToken.for_user(user)
+#         return str(refresh.access_token)
 
-        # with open('staticfiles/imgs/Harley.jpeg', 'rb') as f:
-        #     email.attach_file('my_photo', f.read(), 'image/jpeg')
-        email.send()
-        return Response({"details": "email sent"})
-'''        email.send()
-        send_mail("email/verification.tpl", {"name": "John Doe"}, "from@example.com", ["to@example.com"] )'''
+
+#     def get(self, request, *args, **kwargs):
+#         self.email = self.request.user.email
+#         user_object = get_object_or_404(User, email=self.email)
+#         access_token = self.get_token_for_user(user_object)
+#         email_object = EmailMessage(
+#             subject="Verification Email",
+#             template_name="email/verification.tpl",
+#             context={"access_token": access_token, "name": "John Doe", "cid_photo": "my_photo"},
+#             from_email="from@example.com",
+#             to=["to@example.com"]
+#         )
+
+#         email_thread = EmailThread(email_object).start()
+#         return Response({"details": "email sent"})
+        # email.send()
+        # send_mail("email/verification.tpl", {"name": "John Doe"}, "from@example.com", ["to@example.com"] )
+
+
+class ResendVrificationsAPIView(APIView):
+    permission_classes = [IsAuthenticated,]
+
+    def get_token_for_user(self, user) -> dict[str, str]:
+        refresh = RefreshToken.for_user(user)
+        return str(refresh.access_token)
+
+    def post(self, request, *args, **kwargs):
+        self.email = request.user.email
+        user_object = get_object_or_404(User, email=self.email)
+        if not user_object.is_verified:
+            access_token = self.get_token_for_user(user_object)
+            email_object = EmailMessage(
+                subject="Verification Email",
+                template_name="email/verification.tpl",
+                context={"access_token": access_token, "name": "John Doe", "cid_photo": "my_photo"},
+                from_email="from@example.com",
+                to=["to@example.com"]
+            )
+
+            email_thread = EmailThread(email_object).start()    
+            
+            return Response({"details": "verification email resent successfully"})
+        else:
+            return Response({"details": "your account has already been verified"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerificationAPIView(APIView):
+    
+
+    def post(self, request, token, *args, **kwargs):
+        try:
+            token_data = jwt.decode(token, config("SECRET_KEY"), algorithms=["HS256"])
+            user_id = token_data["user_id"]
+            # print("token: ",token_data)
+
+            
+        except jwt.DecodeError:
+            return Response({"details": "invalid jwt"}, status=status.HTTP_400_BAD_REQUEST)
+
+        except jwt.ExpiredSignatureError:
+            return Response({"details": "expired signature"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        specified_user = User.objects.get(pk=user_id)
+        if specified_user.is_verified:
+            return Response({"details": "user already have been verified"})
+        specified_user.is_verified = True
+        specified_user.save()
+        return Response({"details": "user verified successfully"})
+        
+        
+ 
+
