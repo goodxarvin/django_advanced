@@ -14,7 +14,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from ...models import Profile
 from django.contrib.auth import get_user_model
-
+# from django.core.mail import send_mail
+from mail_templated import EmailMessage
 User = get_user_model()
 
 class RgistrationAPIView(generics.GenericAPIView):
@@ -92,3 +93,21 @@ class ProfileDetailAPIView(generics.RetrieveUpdateAPIView):
         queryset = self.get_queryset()
         obj = get_object_or_404(queryset, user=self.request.user)
         return obj
+
+class SendVerificationEmailAPIView(generics.GenericAPIView):
+
+    def get(self, request, *args, **kwargs):
+        email = EmailMessage(
+            subject="Verification Email",
+            template_name="email/verification.tpl",
+            context={"name": "John Doe", "cid_photo": "my_photo"},
+            from_email="from@example.com",
+            to=["to@example.com"]
+        )
+
+        # with open('staticfiles/imgs/Harley.jpeg', 'rb') as f:
+        #     email.attach_file('my_photo', f.read(), 'image/jpeg')
+        email.send()
+        return Response({"details": "email sent"})
+'''        email.send()
+        send_mail("email/verification.tpl", {"name": "John Doe"}, "from@example.com", ["to@example.com"] )'''

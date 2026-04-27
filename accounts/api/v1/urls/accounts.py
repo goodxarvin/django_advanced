@@ -10,6 +10,14 @@ urlpatterns = [
 
     path("change-password/", views.ChangePasswordAPIView.as_view(), name="change-password"),
 
+    path("test/", views.SendVerificationEmailAPIView.as_view(), name="test-email"),
+
+    #activation
+    # path("activation/confirm/")
+
+    #resend activation
+    # path("activation/resend/")
+
 
     #reset password
 

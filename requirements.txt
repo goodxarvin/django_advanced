@@ -2,6 +2,7 @@ asgiref==3.11.1
 attrs==26.1.0
 Django==5.2.11
 django-filter==25.2
+django-mail-templated==2.6.5
 djangorestframework==3.17.1
 djangorestframework_simplejwt==5.5.1
 drf-yasg==1.21.15
