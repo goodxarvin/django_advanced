@@ -1,25 +1,39 @@
 from curses import A_VERTICAL
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    TemplateView,
+    RedirectView,
+    ListView,
+    DetailView,
+    FormView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 from .models import Post
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from .forms import PostForm
 from django.urls import reverse_lazy
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-#Function Based View template show
-'''def indexView(request):
-    return render(request, "index.html")'''
+# Function Based View template show
+"""def indexView(request):
+    return render(request, "index.html")"""
 
 
 # function based view redirect
 
-'''def redirectView(request):
-    return redirect("https://aur.archlinux.org/")'''
+"""def redirectView(request):
+    return redirect("https://aur.archlinux.org/")"""
+
+
 class IndexView(TemplateView):
     template_name = "blog/index.html"
 
@@ -30,7 +44,9 @@ class IndexView(TemplateView):
         context["city"] = "koth-city"
         context["posts"] = Post.objects.all()
         return context
+
     # extra_context = {"name":"koth2"}
+
 
 class RedirectViewAUR(RedirectView):
     url = "https://aur.archlinux.org/"
@@ -40,7 +56,7 @@ class RedirectViewAUR(RedirectView):
         post = get_object_or_404(Post, id=kwargs["pk"])
         print(post.title)
         return super().get_redirect_url(*args, **kwargs)
-        
+
 
 class PostListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     permission_required = "blog.view_post"
@@ -49,12 +65,13 @@ class PostListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     paginate_by = 2
     ordering = ["-created_at"]
 
-    #queryset = Post.objects.all()
-    #template_name = "post_list.html"
+    # queryset = Post.objects.all()
+    # template_name = "post_list.html"
 
     # def get_queryset(self):
     #     posts = Post.objects.filter(status=True)
     #     return posts
+
 
 class PostDetailView(DetailView):
     model = Post
@@ -64,6 +81,7 @@ class PostDetailView(DetailView):
     def get_object(self):
         return get_object_or_404(Post, id=self.kwargs["pid"])
 
+
 class PostFormView(FormView):
     form_class = PostForm
     template_name = "blog/post_form.html"
@@ -72,6 +90,7 @@ class PostFormView(FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
 
 class PostCreateView(CreateView):
     model = Post
@@ -83,6 +102,7 @@ class PostCreateView(CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user.profile
         return super().form_valid(form)
+
 
 class PostUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     permission_required = "blog.change_post"
@@ -98,6 +118,7 @@ class PostUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+
 class PostDeleteView(DeleteView):
     model = Post
     template_name = "blog/post_delete.html"
@@ -105,6 +126,7 @@ class PostDeleteView(DeleteView):
 
     def get_object(self):
         return get_object_or_404(Post, id=self.kwargs["pid"])
+
 
 @api_view()
 def api_post_list_view(request):

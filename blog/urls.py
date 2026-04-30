@@ -12,14 +12,35 @@ urlpatterns = [
     # path('redirect-view/', views.redirectView, name="redirect-view"),
     # path('cbv/', TemplateView.as_view(template_name="index.html", extra_context={"name":"koth"}), name="cbv-test"),
     # path('post-redirection/<int:pk>/', views.RedirectViewAUR.as_view(), name="post-redirection-post"),
-    path('cbv2/', views.IndexView.as_view(), name="cbv2-test"),
-    path('aur-redirection/', views.RedirectViewAUR.as_view(), name="aur-redirection"),
+    path("cbv2/", views.IndexView.as_view(), name="cbv2-test"),
+    path(
+        "aur-redirection/",
+        views.RedirectViewAUR.as_view(),
+        name="aur-redirection",
+    ),
     path("post/", views.PostListView.as_view(), name="post-list"),
-    path("post/<int:pid>/", views.PostDetailView.as_view(), name="post-detail-page"),
-    path("post/create_temp/", views.PostFormView.as_view(), name="post-create"),
-    path("post/create/", views.PostCreateView.as_view(), name="post-create-form"),
-    path("post/<int:pid>/update/", views.PostUpdateView.as_view(), name="post-update-page"),
-    path("post/<int:pid>/delete/", views.PostDeleteView.as_view(), name="post-delete-page"),
+    path(
+        "post/<int:pid>/",
+        views.PostDetailView.as_view(),
+        name="post-detail-page",
+    ),
+    path(
+        "post/create_temp/", views.PostFormView.as_view(), name="post-create"
+    ),
+    path(
+        "post/create/",
+        views.PostCreateView.as_view(),
+        name="post-create-form",
+    ),
+    path(
+        "post/<int:pid>/update/",
+        views.PostUpdateView.as_view(),
+        name="post-update-page",
+    ),
+    path(
+        "post/<int:pid>/delete/",
+        views.PostDeleteView.as_view(),
+        name="post-delete-page",
+    ),
     path("api/v1/", include("blog.api.v1.urls"), name="api-post-list"),
-
 ]

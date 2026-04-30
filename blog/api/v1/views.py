@@ -2,11 +2,24 @@ from django.forms import SearchInput
 from django.utils.dateparse import iso8601_duration_re
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.fields import DjangoFilePathField
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+    IsAdminUser,
+)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView, ListCreateAPIView, GenericAPIView
+from rest_framework.generics import (
+    RetrieveUpdateDestroyAPIView,
+    CreateAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    DestroyAPIView,
+    UpdateAPIView,
+    ListCreateAPIView,
+    GenericAPIView,
+)
 from rest_framework import mixins
 from .serializers import PostSerializer, CategorySerializer
 from rest_framework import status
@@ -17,7 +30,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .peginations import LargeResultSetPagination
 
-#FBV for post list: 
+# FBV for post list:
 
 """
 #@api_view(['GET', 'POST'])
@@ -44,10 +57,10 @@ def post_list(request):
         # else:
         #     return Response("not valid data")"""
 
-#CBS for post list v1:
+# CBS for post list v1:
 
 
-'''class PostList(APIView):
+"""class PostList(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
     # you can get the query here also: postl = Post.objects.filter(status=True)
@@ -61,12 +74,12 @@ def post_list(request):
         serializer = PostSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)'''
+        return Response(serializer.data)"""
 
 
-#CBS for post list v2:
+# CBS for post list v2:
 
-'''class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+"""class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
@@ -76,10 +89,11 @@ def post_list(request):
     
 
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)'''
+        return self.create(request, *args, **kwargs)"""
 
 
-#CBS for post list v3:
+# CBS for post list v3:
+
 
 class PostList(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -87,10 +101,9 @@ class PostList(ListCreateAPIView):
     queryset = Post.objects.filter(status=True)
 
 
+# FBV for post detail:
 
-#FBV for post detail:
-
-'''@api_view(["GET", "PUT", "DELETE"])
+"""@api_view(["GET", "PUT", "DELETE"])
 def post_detail(request, pid):
     post = get_object_or_404(Post, pk=pid, status=True)
     if request.method == "GET":
@@ -112,10 +125,10 @@ def post_detail(request, pid):
     #     serializer = PostSerializer(post)
     #     return Response(serializer.data)
     # except Post.DoesNotExist:
-    #     return Response({"detail": "post does not exist"}, status=status.HTTP_404_NOT_FOUND)'''
+    #     return Response({"detail": "post does not exist"}, status=status.HTTP_404_NOT_FOUND)"""
 
 
-#CBS for post detail v1:
+# CBS for post detail v1:
 '''
 class PostDetail(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -142,7 +155,7 @@ class PostDetail(APIView):
         post.delete()
         return Response({"detail": "post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 '''
-#CBS for post detail v2:
+# CBS for post detail v2:
 '''
 class PostDetail(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -168,7 +181,7 @@ class PostDetail(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMi
         return self.destroy(request, *args, **kwargs)
 '''
 
-#CBS for post detail v3:
+# CBS for post detail v3:
 
 
 class PostDetail(RetrieveUpdateDestroyAPIView):
@@ -177,10 +190,9 @@ class PostDetail(RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.filter(status=True)
 
 
+# viewset:
 
-# viewset: 
-
-'''
+"""
 class PostViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
@@ -213,17 +225,25 @@ class PostViewSet(viewsets.ViewSet):
         post.delete()
         return Response({"detail": "post deleted successfully"})
 
-'''
-            
+"""
+
 # model viewset:
+
 
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(status=True)
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = {"author":["exact"], "category":["exact", "in"], "status":["exact"]}
-    search_fields = ["title", "content",]
+    filterset_fields = {
+        "author": ["exact"],
+        "category": ["exact", "in"],
+        "status": ["exact"],
+    }
+    search_fields = [
+        "title",
+        "content",
+    ]
     ordering_fields = ["created_at", "published_at"]
     pagination_class = LargeResultSetPagination
 
@@ -231,7 +251,10 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_ok(self, request):
         return Response({"result": "good ok"})
 
+
 class CategoryViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+    ]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()

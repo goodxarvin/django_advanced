@@ -15,7 +15,6 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-
 from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
@@ -24,35 +23,47 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-
-
 schema_view = get_schema_view(
     openapi.Info(
         title="blog post API",
-        default_version='v1',
+        default_version="v1",
         description="this is a Test api for post model",
         contact=openapi.Contact(email="arvin@gmail.com"),
         license=openapi.License(name="MIT License"),
-   ),
+    ),
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
 
 
-
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
     # always put the path below (api-auth/), above the (account/) path :
     path("api-auth/", include("rest_framework.urls")),
     path("accounts/", include("accounts.urls")),
-    path('blog/', include("blog.urls")),
-    path("swagger/output.json", schema_view.without_ui(cache_timeout=0), name="schema-swagger-json"),
-    path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
-    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc")
+    path("blog/", include("blog.urls")),
+    path(
+        "swagger/output.json",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-swagger-json",
+    ),
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path(
+        "redoc/",
+        schema_view.with_ui("redoc", cache_timeout=0),
+        name="schema-redoc",
+    ),
 ]
 
 
-
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    )
+    urlpatterns += static(
+        settings.STATIC_URL, document_root=settings.STATIC_ROOT
+    )
