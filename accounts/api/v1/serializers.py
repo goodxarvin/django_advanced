@@ -1,10 +1,12 @@
-from urllib import request
 from rest_framework import serializers
 from ...models import User, Profile
 from django.core import exceptions 
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from typing import Any
+from django.contrib.auth import authenticate
+from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -31,10 +33,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 
-from django.contrib.auth import authenticate
-from django.utils.translation import gettext_lazy as _
 
-from rest_framework import serializers
 
 
 class CustomAuthTokenSerializer(serializers.Serializer):

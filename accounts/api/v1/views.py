@@ -1,8 +1,5 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from rest_framework import generics
-from rest_framework.response import Response
-from decouple import config
-from .serializers import RegistrationSerializer, CustomAuthTokenSerializer, CustomTokenObtainPairSerializer, ChangePasswordSerializer, ProfileDetailSerializer
 from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -10,14 +7,22 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken 
-from ...models import Profile
-from django.contrib.auth import get_user_model
-# from django.core.mail import send_mail
-from mail_templated import EmailMessage
-from .utils import EmailThread
+from rest_framework import generics
+from rest_framework.response import Response
 import jwt
+from mail_templated import EmailMessage
+from decouple import config
+from .utils import EmailThread
+from .serializers import RegistrationSerializer, CustomAuthTokenSerializer, CustomTokenObtainPairSerializer, ChangePasswordSerializer, ProfileDetailSerializer
+from ...models import Profile
+# from django.core.mail import send_mail
+
+
 User = get_user_model()
 
+
+
+# registration view
 class RgistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
 
@@ -26,7 +31,7 @@ class RgistrationAPIView(generics.GenericAPIView):
         return str(refresh.access_token)
 
     def post(self, request, *args, **kwargs):
-        serializer = RegistrationSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             email = serializer.validated_data["email"]
@@ -51,6 +56,9 @@ class RgistrationAPIView(generics.GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+
+
+# normal token creation view
 class CustomAuthToken(ObtainAuthToken):
     serializer_class = CustomAuthTokenSerializer
 
@@ -67,12 +75,16 @@ class CustomAuthToken(ObtainAuthToken):
         })
 
 
+
+# dicard normal token view
 class CustomDiscardToken(APIView):
     permission_classes = [IsAuthenticated,]
 
     def post(self, request):
         request.user.auth_token.delete()
         return Response({"detail": "logged out successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -168,7 +180,7 @@ class ResendVrificationsAPIView(APIView):
 class VerificationAPIView(APIView):
     
 
-    def post(self, request, token, *args, **kwargs):
+    def get(self, request, token, *args, **kwargs):
         try:
             token_data = jwt.decode(token, config("SECRET_KEY"), algorithms=["HS256"])
             user_id = token_data["user_id"]
