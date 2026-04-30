@@ -12,7 +12,8 @@ urlpatterns = [
     # path('redirect-view/', views.redirectView, name="redirect-view"),
     # path('cbv/', TemplateView.as_view(template_name="index.html", extra_context={"name":"koth"}), name="cbv-test"),
     # path('post-redirection/<int:pk>/', views.RedirectViewAUR.as_view(), name="post-redirection-post"),
-    path("cbv2/", views.IndexView.as_view(), name="cbv2-test"),
+    path("index", views.IndexView.as_view(), name="index"),
+    # path("cbv2/", views.IndexView.as_view(), name="cbv2-test"),
     path(
         "aur-redirection/",
         views.RedirectViewAUR.as_view(),
@@ -20,7 +21,7 @@ urlpatterns = [
     ),
     path("post/", views.PostListView.as_view(), name="post-list"),
     path(
-        "post/<int:pid>/",
+        "post/<int:pk>/",
         views.PostDetailView.as_view(),
         name="post-detail-page",
     ),
@@ -33,12 +34,12 @@ urlpatterns = [
         name="post-create-form",
     ),
     path(
-        "post/<int:pid>/update/",
+        "post/<int:pk>/update/",
         views.PostUpdateView.as_view(),
         name="post-update-page",
     ),
     path(
-        "post/<int:pid>/delete/",
+        "post/<int:pk>/delete/",
         views.PostDeleteView.as_view(),
         name="post-delete-page",
     ),
