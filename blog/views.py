@@ -54,7 +54,7 @@ class RedirectViewAUR(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         post = get_object_or_404(Post, id=kwargs["pk"])
-        print(post.title)
+        print(post.pk)
         return super().get_redirect_url(*args, **kwargs)
 
 
@@ -73,13 +73,13 @@ class PostListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #     return posts
 
 
-class PostDetailView(DetailView):
+class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
     context_object_name = "post"
     template_name = "blog/post_detail.html"
 
     def get_object(self):
-        return get_object_or_404(Post, id=self.kwargs["pid"])
+        return get_object_or_404(Post, id=self.kwargs["pk"])
 
 
 class PostFormView(FormView):

@@ -12,7 +12,7 @@ urlpatterns = [
     # path('redirect-view/', views.redirectView, name="redirect-view"),
     # path('cbv/', TemplateView.as_view(template_name="index.html", extra_context={"name":"koth"}), name="cbv-test"),
     # path('post-redirection/<int:pk>/', views.RedirectViewAUR.as_view(), name="post-redirection-post"),
-    path("index", views.IndexView.as_view(), name="index"),
+    path("index/", views.IndexView.as_view(), name="index"),
     # path("cbv2/", views.IndexView.as_view(), name="cbv2-test"),
     path(
         "aur-redirection/",
