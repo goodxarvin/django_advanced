@@ -14,5 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: work test
-      run: false
+    - name: setup docker
+      run: docker-compose up -d
+    - name: run tests
+      run: docker-compose exec backend sh -c "python -m pytest ."
+    
