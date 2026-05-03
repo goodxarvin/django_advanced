@@ -52,7 +52,7 @@ class PostSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         rep = super().to_representation(instance)
         rep["category"] = CategorySerializer(
-            instance.category, context={"request": request}
+            instance.category.all(), many=True, context={"request": request}
         ).data
         if request.parser_context.get("kwargs"):
             rep.pop("snippet", None)
