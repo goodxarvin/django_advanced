@@ -72,3 +72,5 @@ class TestPostAPI:
         response = self.client.post(url, data)
 
         assert response.status_code == 400
+    
+    #finished tests
