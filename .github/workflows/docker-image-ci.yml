@@ -17,4 +17,4 @@ jobs:
     - name: setup docker compose
       run: docker compose up -d
     - name: run tests
-      run: docker-compose exec backend sh -c "python -m pytest ."
+      run: docker compose exec backend sh -c "python -m pytest ."
