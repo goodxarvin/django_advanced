@@ -25,9 +25,7 @@ urlpatterns = [
         views.PostDetailView.as_view(),
         name="post-detail-page",
     ),
-    path(
-        "post/create_temp/", views.PostFormView.as_view(), name="post-create"
-    ),
+    path("post/create_temp/", views.PostFormView.as_view(), name="post-create"),
     path(
         "post/create/",
         views.PostCreateView.as_view(),

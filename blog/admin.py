@@ -19,7 +19,7 @@ class PostAdmin(admin.ModelAdmin):
     )
     list_filter = ("status", "author")
     search_fields = ("title", "content")
-    list_editable = ("status", )
+    list_editable = ("status",)
     list_per_page = 10
     list_display_links = ("title", "author")
 
