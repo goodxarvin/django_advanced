@@ -65,6 +65,16 @@ class PostListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     paginate_by = 2
     ordering = ["-created_at"]
 
+
+class PostListAPIView(TemplateView):
+    template_name = "blog/post_list_api_view.html"
+    permission_required = "blog.view_post"
+    model = Post
+    context_object_name = "posts"
+    paginate_by = 2
+    ordering = ["-created_at"]
+
+
     # queryset = Post.objects.all()
     # template_name = "post_list.html"
 
