@@ -254,7 +254,8 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [
-        IsAuthenticatedOrReadOnly,
+        # IsAuthenticatedOrReadOnly,
+        IsAuthenticated,
     ]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
