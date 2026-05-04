@@ -185,3 +185,7 @@ EMAIL_PORT = 25
 # allow all the other outside requests to access api
 
 # CORS_ALLOW_ALL_ORIGINS = True
+
+# setting the broker for celery
+
+CELERY_BROKER_URL = "redis://redis:6379/1"
