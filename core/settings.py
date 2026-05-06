@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_celery_beat",
     "django_filters",
     "drf_yasg",
     "rest_framework",
@@ -189,3 +190,12 @@ EMAIL_PORT = 25
 # setting the broker for celery
 
 CELERY_BROKER_URL = "redis://redis:6379/1"
+
+
+CELERY_BEAT_SCHEDULE = {
+    "send_email": {
+        "task": "accounts.tasks.celery_send_email",
+        "schedule": 5,
+    }
+}
+
