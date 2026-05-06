@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from accounts.models import User
 from django.urls import reverse
 
+
 @pytest.fixture
 def user_object():
     user = User.objects.create_user(
@@ -14,20 +15,19 @@ def user_object():
     return user
 
 
-@pytest.mark.django_db # allow pytest to access database
+@pytest.mark.django_db  # allow pytest to access database
 class TestPostAPI:
 
     client = APIClient()
 
     def test_get_post_response_200_status(self, user_object):
-        #find post list url
+        # find post list url
         url = reverse("blog:api-v1:post-list")
-        #client creation
+        # client creation
         self.client.force_login(user=user_object)
         response = self.client.get(url)
         assert response.status_code == 200
 
-    
     def test_create_post_response_401_status(self, user_object):
 
         # client.force_login(user=self.user)
@@ -38,12 +38,11 @@ class TestPostAPI:
             # "author": None,
             "status": True,
             # "category": None,
-            "published_at": datetime.now()
+            "published_at": datetime.now(),
         }
         response = self.client.post(url, data)
         assert response.status_code == 401
 
-    
     def test_postMehod_post_response_201_status(self, user_object):
         data = {
             "title": "pytest",
@@ -51,15 +50,16 @@ class TestPostAPI:
             # "author": None,
             "status": True,
             # "category": None,
-            "published_at": datetime.now()
+            "published_at": datetime.now(),
         }
-        self.client.force_authenticate(user=user_object) # or self.client.force_login(user=user_object)
-        url = reverse('blog:api-v1:post-list')
+        self.client.force_authenticate(
+            user=user_object
+        )  # or self.client.force_login(user=user_object)
+        url = reverse("blog:api-v1:post-list")
         response = self.client.post(url, data)
 
         assert response.status_code == 201
 
-    
     def test_postMehod_post_invalid_data_response_400_status(self, user_object):
         data = {
             "title": "pytest",
@@ -67,10 +67,12 @@ class TestPostAPI:
             # "author": None,
             # "category": None,
         }
-        self.client.force_authenticate(user=user_object) # or self.client.force_login(user=user_object)
-        url = reverse('blog:api-v1:post-list')
+        self.client.force_authenticate(
+            user=user_object
+        )  # or self.client.force_login(user=user_object)
+        url = reverse("blog:api-v1:post-list")
         response = self.client.post(url, data)
 
         assert response.status_code == 400
-    
-    #finished tests
+
+    # finished tests

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post List</title>
+</head>
+
+<body>
+    <h1>Post List</h1>
+    <ol id="post-wrapper">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer">
+        </script>
+        <script>
+            $.get('/blog/api/v1/post/',  // url
+                function (data, textStatus, jqXHR) {  
+                    wrapper = $('#post-wrapper')
+                    for (post of data.results){
+                        wrapper.append(`<li><a href="${post.absolute_url}"><h2>${post.title}</h2></a><li>`)
+                    }
+                    // success callback
+                    // alert('status: ' + textStatus + ', data:' + data);
+                    // console.log(data);
+            });
+        </script>
+    </ol>
+
+    <div class="pagination">
+        <span class="step-links">
+        </span>
+    </div>
+</body>
+
+</html>

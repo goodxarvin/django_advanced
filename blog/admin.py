@@ -11,15 +11,15 @@ class PostAdmin(admin.ModelAdmin):
         "id",
         "title",
         "author",
-        "category",
+        # "category",
         "status",
         "created_at",
         "updated_at",
         "published_at",
     )
-    list_filter = ("status", "category", "author")
+    list_filter = ("status", "author")
     search_fields = ("title", "content")
-    list_editable = ("status", "category")
+    list_editable = ("status",)
     list_per_page = 10
     list_display_links = ("title", "author")
 
