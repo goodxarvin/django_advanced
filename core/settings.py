@@ -189,7 +189,7 @@ EMAIL_PORT = 25
 
 # setting the broker for celery
 
-CELERY_BROKER_URL = "redis://redis:6379/1"
+CELERY_BROKER_URL = "redis://redis_advanced:6379/1"
 
 
 CELERY_BEAT_SCHEDULE = {
@@ -199,3 +199,15 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
+# django-redis-caching settings
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis_advanced:6379/2",
+        "TIMEOUT": 300,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}

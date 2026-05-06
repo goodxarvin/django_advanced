@@ -1,7 +1,7 @@
 services:
 
   redis:
-    container_name: redis
+    container_name: redis_advanced
     image: redis:latest
 
     restart: always
@@ -21,9 +21,17 @@ services:
     volumes:
       - .:/app
 
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
     depends_on:
       - redis
     command: python manage.py runserver 0.0.0.0:8000
+
+
+
+
+
 
   worker_celery:
     build: .
