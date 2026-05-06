@@ -19,12 +19,8 @@ class PostSerializer(serializers.ModelSerializer):
     # category = CategorySerializer()
     # author = serializers.CharField(read_only=True)
     snippet = serializers.ReadOnlyField(source="get_snippet")
-    relative_url = serializers.URLField(
-        source="get_absolute_api_url", read_only=True
-    )
-    absolute_url = serializers.SerializerMethodField(
-        method_name="get_absolute_url"
-    )
+    relative_url = serializers.URLField(source="get_absolute_api_url", read_only=True)
+    absolute_url = serializers.SerializerMethodField(method_name="get_absolute_url")
 
     class Meta:
         model = Post
@@ -52,7 +48,7 @@ class PostSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         rep = super().to_representation(instance)
         rep["category"] = CategorySerializer(
-            instance.category, context={"request": request}
+            instance.category.all(), many=True, context={"request": request}
         ).data
         if request.parser_context.get("kwargs"):
             rep.pop("snippet", None)
