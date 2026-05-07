@@ -27,6 +27,7 @@ djoser==2.3.3
 drf-yasg==1.21.15
 Faker==40.15.0
 flake8==7.3.0
+gunicorn==26.0.0
 idna==3.13
 importlib_resources==7.1.0
 inflection==0.5.1

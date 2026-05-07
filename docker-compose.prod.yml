@@ -1,0 +1,97 @@
+services:
+
+  redis:
+    container_name: redis_advanced
+    image: redis:latest
+
+    restart: always
+    
+    ports:
+      - "6379:6379"
+
+    command: redis-server --save 60 1 --loglevel warning
+  backend:
+    build: .
+    container_name: backend
+    environment:
+      - SECRET_KEY=test
+      - DEBUG=True
+    ports:
+      - "8001:8000"
+    volumes:
+      - .:/app
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    depends_on:
+      - redis
+    command: python manage.py runserver 0.0.0.0:8000
+
+
+
+
+
+
+  worker_celery:
+    build: .
+    command: python -m celery -A core worker --loglevel=info
+
+    volumes:
+      - .:/app
+
+    depends_on:
+      - redis
+      - backend 
+    
+
+  smtp4dev:
+    image: rnwood/smtp4dev:v3
+    restart: on-failure
+    ports:
+      # Change the number before : to the port the web interface should be accessible on
+      # Add 127.0.0.1: prefix for localhost-only access (recommended for security)
+      - '5000:80'
+      # Change the number before : to the port the SMTP server should be accessible on
+      # Add 127.0.0.1: prefix for localhost-only access (recommended for security)
+      - '25:25'
+      # Change the number before : to the port the IMAP server should be accessible on
+      # Add 127.0.0.1: prefix for localhost-only access (recommended for security)
+      - '143:143'
+      # Change the number before : to the port the POP3 server should be accessible on
+      # Add 127.0.0.1: prefix for localhost-only access (recommended for security)
+      - '110:110'
+    volumes:
+      # This is where smtp4dev stores the database..
+        - smtp4dev-data:/smtp4dev
+    environment:
+      # Uncomment to customise these settings
+      # This is not a complete list of the available settings.
+      # See the documentation in appsettings.json for a full list.
+
+      #Specifies the virtual path from web server root where SMTP4DEV web interface will be hosted. e.g. "/" or "/smtp4dev"
+      #- ServerOptions__BasePath=/smtp4dev
+
+      #Specifies the URLs the web UI will use inside the container.
+      - ServerOptions__Urls=http://*:80
+
+      #Specifies the server hostname. Used in auto-generated TLS certificate if enabled.
+      - ServerOptions__HostName=smtp4dev
+
+
+  master:
+    image: locustio/locust
+    ports:
+     - "8089:8089"
+    volumes:
+      - ./locust:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --master -H http://backend:8000
+  
+  worker:
+    image: locustio/locust
+    volumes:
+      - ./locust:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --worker --master-host master
+
+volumes:
+  smtp4dev-data:
