@@ -47,9 +47,9 @@ class TestPostAPI:
         data = {
             "title": "pytest",
             "content": "test",
-            # "author": None,
+            "author": None,
             "status": True,
-            # "category": None,
+            "category": None,
             "published_at": datetime.now(),
         }
         self.client.force_authenticate(
