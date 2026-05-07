@@ -205,7 +205,7 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://redis_advanced:6379/2",
-        "TIMEOUT": 300,
+        # "TIMEOUT": 300, --> update all the caches every ... second
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
