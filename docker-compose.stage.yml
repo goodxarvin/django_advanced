@@ -1,0 +1,39 @@
+services:
+
+  redis:
+    container_name: redis_advanced
+    image: redis:latest
+
+    restart: always
+
+    command: redis-server --save 60 1
+
+  backend:
+    build: .
+    container_name: backend
+
+    depends_on:
+      - redis
+
+    environment:
+      - SECRET_KEY=test
+      - DEBUG=True
+    ports:
+      - "8001:8000"
+
+    volumes:
+      - .:/app
+
+    command: python manage.py runserver 0.0.0.0:8000 # python -m gunicorn core.wsgi --bind 0.0.0.0:8000
+
+  worker_celery:
+    build: .
+    command: python -m celery -A core worker --loglevel=info
+
+    depends_on:
+      - redis
+      - backend 
+    
+
+
+

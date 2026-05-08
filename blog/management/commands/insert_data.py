@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
 from faker import Faker
-from datetime import datetime
 from django.utils import timezone
 from random import choice
 from accounts.models import User, Profile
