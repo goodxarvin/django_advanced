@@ -1,7 +1,9 @@
 import pytest
+from django.utils import timezone
 from datetime import datetime
 from rest_framework.test import APIClient
 from accounts.models import User
+from ..models import Category
 from django.urls import reverse
 
 
@@ -14,6 +16,12 @@ def user_object():
     )
     return user
 
+@pytest.fixture
+def category_object():
+    category = Category.objects.create(
+        name="python"
+    )
+    return category
 
 @pytest.mark.django_db  # allow pytest to access database
 class TestPostAPI:
@@ -27,6 +35,7 @@ class TestPostAPI:
         self.client.force_login(user=user_object)
         response = self.client.get(url)
         assert response.status_code == 200
+
 
     def test_create_post_response_401_status(self, user_object):
 
@@ -44,20 +53,20 @@ class TestPostAPI:
         assert response.status_code == 401
 
     def test_postMehod_post_response_201_status(self, user_object):
+        category = Category.objects.create(name="python")
         data = {
             "title": "pytest",
             "content": "test",
-            "author": None,
+            # "author": None,
             "status": True,
-            "category": None,
-            "published_at": datetime.now(),
+            "category": category.id,
+            "published_at": timezone.now(),
         }
-        self.client.force_authenticate(
+        self.client.force_login(
             user=user_object
         )  # or self.client.force_login(user=user_object)
         url = reverse("blog:api-v1:post-list")
         response = self.client.post(url, data)
-
         assert response.status_code == 201
 
     def test_postMehod_post_invalid_data_response_400_status(self, user_object):

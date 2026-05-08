@@ -17,12 +17,14 @@ services:
 
     environment:
       - SECRET_KEY=test
-      - DEBUG=False
+      - DEBUG=True
     ports:
       - "8001:8000"
 
-    command: python -m gunicorn core.wsgi --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
 
+    command: python manage.py runserver 0.0.0.0:8000 # python -m gunicorn core.wsgi --bind 0.0.0.0:8000
 
   worker_celery:
     build: .
