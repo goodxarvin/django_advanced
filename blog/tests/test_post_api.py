@@ -59,7 +59,7 @@ class TestPostAPI:
             "content": "test",
             # "author": None,
             "status": True,
-            "category": category.id,
+            "category": [category.id,],
             "published_at": timezone.now(),
         }
         self.client.force_login(
