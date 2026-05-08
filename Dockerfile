@@ -11,7 +11,10 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 WORKDIR /app 
 COPY . .
-RUN chown -R 1000:1000 .
+
+RUN useradd -u 1000 -m appuser
+RUN chown -R appuser:appuser /app
+
 USER appuser
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
