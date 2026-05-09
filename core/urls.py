@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
@@ -35,8 +36,12 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
+def IndexView(request):
+    return HttpResponse("<h1>home page</h1>")
+
 
 urlpatterns = [
+    path("", IndexView, name="index"),
     path("admin/", admin.site.urls),
     # always put the path below (api-auth/), above the (account/) path :
     path("api-auth/", include("rest_framework.urls")),
