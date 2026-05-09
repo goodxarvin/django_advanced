@@ -38,4 +38,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            ls
+            cd ${{secrets.PROJECT_PATH}}
+            docker compose -f docker-compose.stage.yml stop
+            git pull
+            docker compose -f docker-compose.stage.yml restart
+
