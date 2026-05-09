@@ -31,9 +31,9 @@ jobs:
     - name: connect and execute commands of CD
     - uses: appleboy/ssh-connect@master
     - with:
-        username: {{secrets.USERNAME}}
-        password: {{secrets.PASSWORD}}
-        host: {{secrets.HOST}}
-        post: {{secrets.PORT}}
+        username: ${{secrets.USERNAME}}
+        password: ${{secrets.PASSWORD}}
+        host: ${{secrets.HOST}}
+        post: ${{secrets.PORT}}
         script: ls
       
