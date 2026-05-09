@@ -37,7 +37,7 @@ schema_view = get_schema_view(
 )
 
 def IndexView(request):
-    return HttpResponse("<h1>home page</h1>")
+    return HttpResponse("<h1>home page (deploy works)</h1>")
 
 
 urlpatterns = [
