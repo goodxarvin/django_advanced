@@ -8,8 +8,8 @@ on:
 
 jobs:
 
-  test:
-    name: test
+  Test:
+    name: Test
     runs-on: ubuntu-latest
 
     steps:
@@ -21,10 +21,11 @@ jobs:
       - name: run tests
         run: docker compose exec backend sh -c "python -m pytest ."
 
-  deploy:
-    name: deploy
+  Deploy:
+    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
+    name: Deploy
+    needs: Test
     runs-on: ubuntu-latest
-    needs: test
 
     steps:
       - uses: actions/checkout@v4
