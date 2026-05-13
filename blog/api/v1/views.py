@@ -7,6 +7,7 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly,
     IsAdminUser,
 )
+from accounts.models import Profile
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets
@@ -21,14 +22,15 @@ from rest_framework.generics import (
     GenericAPIView,
 )
 from rest_framework import mixins
-from .serializers import PostSerializer, CategorySerializer
+from .serializers import PostSerializer, CategorySerializer, CommentSerializer
 from rest_framework import status
-from ...models import Post, Category
+from ...models import Comment, Post, Category
 from django.shortcuts import get_object_or_404
 from .permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .peginations import LargeResultSetPagination
+
 
 # FBV for post list:
 
@@ -259,3 +261,21 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
+    # queryset = Comment.objects.filter(post__id)
+    def get_queryset(self):
+        post_pk = self.kwargs["post_pk"]
+        return Comment.objects.filter(post__pk=post_pk)        
+
+
+    def perform_create(self, serializer):
+        # post = Post.objects.get(pk=self.kwargs["post_pk"])
+        profile = Profile.objects.get(user__id=self.request.user.id)
+        serializer.save(
+            user=profile,
+            post_id=self.kwargs["post_pk"],
+        )
