@@ -63,7 +63,8 @@ This project serves as a portfolio piece demonstrating:
 ## 📖 API Documentation
 
 The API endpoints and documentation can be accessed at:
-- **API Root**: `http://localhost:8000/api/`
+- **API Root**: `http://localhost:8000/api/v1/`
+- **Swagger**: `http://localhost:8000/swagger/`
 - **Browsable API**: Available through Django REST Framework's interface
 
 ## 💡 Key Features
