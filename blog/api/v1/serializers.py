@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ...models import Post, Category
+from ...models import Post, Category, Comment
 from accounts.models import Profile
 
 # class PostSerializer(serializers.Serializer):
@@ -11,6 +11,21 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ["id", "name"]
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["id", "post", "parent", "user", "content",]
+        read_only_fields = ["post", "user",]
+    
+    def validate_parent(self, value):
+        if value.parent.parent is not None:
+            raise serializers.ValidationError(
+                "You cannot reply to a comment with depth of more then two."
+            )
+        return value
+    
+    
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -32,6 +47,7 @@ class PostSerializer(serializers.ModelSerializer):
             "snippet",
             "author",
             "category",
+            "comment",
             "status",
             "absolute_url",
             "relative_url",
@@ -49,6 +65,9 @@ class PostSerializer(serializers.ModelSerializer):
         rep = super().to_representation(instance)
         rep["category"] = CategorySerializer(
             instance.category.all(), many=True, context={"request": request}
+        ).data
+        rep["comment"] = CommentSerializer(
+            instance.comment.all(), many=True, context={"request": request}
         ).data
         if request.parser_context.get("kwargs"):
             rep.pop("snippet", None)
